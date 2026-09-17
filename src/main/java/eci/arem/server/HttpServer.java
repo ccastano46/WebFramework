@@ -1,0 +1,77 @@
+package eci.arem.server;
+
+
+import eci.arem.server.webframework.HttpRequest;
+import eci.arem.server.webframework.HttpResponse;
+import eci.arem.server.webframework.WebFramework;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.*;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+
+public class HttpServer {
+    private static boolean running = true;
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        //To run locally (IDE) uncomment this line
+        //FileResolver fileResolver = new FileResolver("src/main/resources/public");
+        //FileResolver fileResolver = new FileResolver("public"); //Production
+
+        int port = Integer.parseInt(args[0]);
+        ServerSocket serverSocket = new ServerSocket(port);
+
+        while (running) {
+            logger.info("Ready to receive...");
+            try {
+                Socket clientSocket = serverSocket.accept();
+                try (clientSocket;
+                     OutputStream out = clientSocket.getOutputStream();
+                     BufferedReader in = new BufferedReader(
+                             new InputStreamReader(clientSocket.getInputStream()))) {
+
+                    HttpRequest request = parse(in);
+                    HttpResponse response = new HttpResponse();
+                    response = !request.getMethod().equals("GET") ? WebFramework.invokeBadMethod(request, response)
+                            : WebFramework.isAService(request) ? WebFramework.invokeService(request, response)
+                            : WebFramework.invokeStaticFiles(request, response);
+
+                    out.write(response.getHeader());
+                    out.write(response.getBody());
+                    out.flush();
+                }
+            } catch (Exception e) {
+                logger.error("Error handling connection: {}", e.getMessage());
+            }
+        }
+        serverSocket.close();
+    }
+
+    private static HttpRequest parse(BufferedReader in) throws IOException, URISyntaxException {
+        boolean isFirstLine = true;
+        String method = "";
+        String inputLine;
+        String strUri = "";
+
+        while ((inputLine = in.readLine()) != null) {
+            if (isFirstLine) {
+                String[] parts = inputLine.split(" ");
+                method = parts.length > 0 ? parts[0] : "";
+
+                strUri = parts[1];
+
+                isFirstLine = false;
+            }
+            logger.info("Received: {}", inputLine);
+            if (!in.ready()) {
+                break;
+            }
+        }
+
+        return new HttpRequest(method, new URI(strUri));
+    }
+
+}
