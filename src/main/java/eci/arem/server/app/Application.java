@@ -1,30 +1,25 @@
 package eci.arem.server.app;
 
-import static eci.arem.server.webframework.WebFramework.*;
-import static java.lang.IO.println;
-import java.net.URI;
+import static eci.arem.server.HttpServer.stop;
+import static eci.arem.server.webframework.WebFramework.staticFiles;
+import static eci.arem.server.webframework.WebFramework.start;
+import static eci.arem.server.webframework.WebFramework.get;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Map;
 
-
-import eci.arem.server.webframework.HttpRequest;
-import eci.arem.server.webframework.HttpResponse;
 import eci.arem.server.webframework.HttpStatus;
 
 public class Application {
 
     public static void main(String[] args) throws Exception {
+        Map<String, String> env = System.getenv();
 
-
-        String staticPathEnv = System.getenv("STATIC_PATH");
-        //String staticPath = staticPathEnv != null ? staticPathEnv : "public";
-        String staticPath = staticPathEnv != null ? staticPathEnv : "src/main/resources/public";
-
+        //String staticPath = env.getOrDefault("STATIC_PATH", "public");
+        String staticPath = env.getOrDefault("STATIC_PATH", "src/main/resources/public");
+        String environment = env.getOrDefault("APP_ENV", "development");
+        int port = Integer.parseInt(env.getOrDefault("PORT", "8080"));
         staticFiles(staticPath);
-
-
-
-
 
         get("/hello",
                 (req, resp) ->{
@@ -76,8 +71,13 @@ public class Application {
                 resp.setBody((String.valueOf(Math.E)).getBytes(StandardCharsets.UTF_8))
         );
 
-        String portEnv = System.getenv("PORT");
-        int port = portEnv != null ? Integer.parseInt(portEnv) : 8080;
+
+        if(environment.equals("development") || environment.equals("dev")){
+            get("/shutdown", (req, resp) -> {
+                resp.setBody(("Goodbye").getBytes(StandardCharsets.UTF_8));
+                stop();
+            });
+        }
 
         start(port);
     }
