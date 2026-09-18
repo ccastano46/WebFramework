@@ -1,4 +1,4 @@
-package eci.arem.server.webframework;
+package eci.arem.http;
 
 public enum HttpStatus {
     // 2xx Éxito

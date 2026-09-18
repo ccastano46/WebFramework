@@ -1,9 +1,8 @@
 package eci.arem.server;
 
 
-import eci.arem.server.webframework.HttpRequest;
-import eci.arem.server.webframework.HttpResponse;
-import eci.arem.server.webframework.WebFramework;
+import eci.arem.http.HttpRequest;
+import eci.arem.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +15,6 @@ public class HttpServer {
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        //To run locally (IDE) uncomment this line
-        //FileResolver fileResolver = new FileResolver("src/main/resources/public");
-        //FileResolver fileResolver = new FileResolver("public"); //Production
 
         int port = Integer.parseInt(args[0]);
         ServerSocket serverSocket = new ServerSocket(port);
@@ -34,10 +30,7 @@ public class HttpServer {
                              new InputStreamReader(clientSocket.getInputStream()))) {
 
                     HttpRequest request = parse(in);
-                    HttpResponse response = new HttpResponse();
-                    response = !request.getMethod().equals("GET") ? WebFramework.invokeBadMethod(request, response)
-                            : WebFramework.isAService(request) ? WebFramework.invokeService(request, response)
-                            : WebFramework.invokeStaticFiles(request, response);
+                    HttpResponse response = Router.route(request);
 
                     out.write(response.getHeader());
                     out.write(response.getBody());
@@ -62,7 +55,7 @@ public class HttpServer {
                 String[] parts = inputLine.split(" ");
                 method = parts.length > 0 ? parts[0] : "";
 
-                strUri = parts[1];
+                strUri = parts.length > 1 ? parts[1] : "/badRequest";
 
                 isFirstLine = false;
             }

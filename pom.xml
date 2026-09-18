@@ -36,7 +36,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>eci.arem.server.app.Application</mainClass>
+                                    <mainClass>eci.arem.app.Application</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
