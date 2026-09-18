@@ -1,4 +1,4 @@
-package eci.arem.server.webframework.utils;
+package eci.arem.server.utils;
 
 public class JsonUtils {
 

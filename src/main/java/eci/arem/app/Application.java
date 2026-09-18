@@ -1,18 +1,18 @@
-package eci.arem.server.app;
+package eci.arem.app;
 
-import static eci.arem.server.HttpServer.stop;
-import static eci.arem.server.webframework.WebFramework.staticFiles;
-import static eci.arem.server.webframework.WebFramework.start;
-import static eci.arem.server.webframework.WebFramework.get;
+import static eci.arem.webframework.WebFramework.stop;
+import static eci.arem.webframework.WebFramework.staticFiles;
+import static eci.arem.webframework.WebFramework.start;
+import static eci.arem.webframework.WebFramework.get;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map;
 
-import eci.arem.server.webframework.HttpStatus;
+import eci.arem.http.HttpStatus;
 
 public class Application {
 
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
         Map<String, String> env = System.getenv();
 
         //String staticPath = env.getOrDefault("STATIC_PATH", "public");
@@ -43,7 +43,7 @@ public class Application {
                         double square = value * value;
                         resp.setContentType("application/json");
                         strBody = "{\"value\":" + value + ",\"square\":" + square + "}";
-                    } catch (NumberFormatException | NullPointerException e) {
+                    } catch (NumberFormatException | NullPointerException _) {
                         resp.setStatusCode(HttpStatus.BAD_REQUEST);
                         strBody = "Bad request: missing or invalid 'value' parameter";
                     }
@@ -61,8 +61,6 @@ public class Application {
            resp.setBody(("{\"serverTime\":\"" + Instant.now() + "\"}").getBytes(StandardCharsets.UTF_8));
         });
 
-
-
         get("/pi", (req, resp) ->
                 resp.setBody((String.valueOf(Math.PI)).getBytes(StandardCharsets.UTF_8))
                 );
@@ -70,7 +68,6 @@ public class Application {
         get("/e", (req, resp) ->
                 resp.setBody((String.valueOf(Math.E)).getBytes(StandardCharsets.UTF_8))
         );
-
 
         if(environment.equals("development") || environment.equals("dev")){
             get("/shutdown", (req, resp) -> {

@@ -1,4 +1,4 @@
-package eci.arem.server.webframework;
+package eci.arem.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,15 +8,17 @@ import java.nio.file.Paths;
 
 public class FileResolver {
 
+    static String basePath;
 
+    private FileResolver(){}
 
-    static byte[] getFileBytes(String basePath, String file) throws IOException {
+    static byte[] getFileBytes(String file) throws IOException {
         Path base = Paths.get(basePath).toAbsolutePath().normalize();
         Path pathFile = base.resolve("." + file).normalize();
 
-        if (!pathFile.startsWith(base) || !Files.exists(pathFile) || Files.isDirectory(pathFile)) {
+        if (!pathFile.startsWith(base) || !Files.exists(pathFile) || Files.isDirectory(pathFile))
             throw new FileNotFoundException();
-        }
+
         return Files.readAllBytes(pathFile);
     }
 
