@@ -15,9 +15,12 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
 
-        //To run locally (IDE) uncomment this line
-        //staticFiles("src/main/resources/public");
-        staticFiles("public"); //Production
+
+        String staticPathEnv = System.getenv("STATIC_PATH");
+        //String staticPath = staticPathEnv != null ? staticPathEnv : "public";
+        String staticPath = staticPathEnv != null ? staticPathEnv : "src/main/resources/public";
+
+        staticFiles(staticPath); //Production
 
 
 
