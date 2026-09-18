@@ -13,20 +13,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:35000/greeting?name=Camilo",
+          "raw": "http://localhost:35000/hello",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "35000",
           "path": [
-            "greeting"
-          ],
-          "query": [
-            {
-              "key": "name",
-              "value": "Camilo"
-            }
+            "hello"
           ]
         }
       },
@@ -63,14 +57,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:35000/server-time",
+          "raw": "http://localhost:35000/time",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "35000",
           "path": [
-            "server-time"
+            "time"
           ]
         }
       },
