@@ -20,7 +20,7 @@ public class Application {
         //String staticPath = staticPathEnv != null ? staticPathEnv : "public";
         String staticPath = staticPathEnv != null ? staticPathEnv : "src/main/resources/public";
 
-        staticFiles(staticPath); //Production
+        staticFiles(staticPath);
 
 
 
