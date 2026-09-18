@@ -9,11 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.*;
 import java.io.*;
-import java.util.List;
-import java.util.Map;
+
 
 public class HttpServer {
-    private static boolean running = true;
+    private static boolean running = false;
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -23,6 +22,7 @@ public class HttpServer {
 
         int port = Integer.parseInt(args[0]);
         ServerSocket serverSocket = new ServerSocket(port);
+        running = true;
 
         while (running) {
             logger.info("Ready to receive...");
@@ -47,6 +47,7 @@ public class HttpServer {
                 logger.error("Error handling connection: {}", e.getMessage());
             }
         }
+        logger.info("Server stopped gracefully.");
         serverSocket.close();
     }
 
@@ -72,6 +73,10 @@ public class HttpServer {
         }
 
         return new HttpRequest(method, new URI(strUri));
+    }
+
+    public static void stop() {
+        running = false;
     }
 
 }
